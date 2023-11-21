@@ -35,6 +35,10 @@ body {
   font-size: 23px;
 }
 
+fontColor{
+  color: black;
+}
+
 input[type="checkbox"] {
   width: 20px !important;
   height: 20px !important;
