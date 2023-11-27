@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add expense</title>
+    <title>Show balance</title>
     <script src="site.js"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
@@ -156,52 +156,122 @@
       </nav>
     </section>
 
-    <section id="navigation-bar">
-        <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 md-5" tabindex="-1" role="dialog" id="modalSheet">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content rounded-4 shadow ">
-                <div class="gradient-custom-2 modal-header border-bottom-0" style="color: white;">
-                  <h1 class="modal-title fs-5">Adding new revenue</h1>
-                </div>
+  
 
-                <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-4 border-top-0">
-                </div>
-                <div class="container">
-    
-                    <div class="col pb-3">
-                      <input type="text" class="form-control" placeholder=" Amount" />
-                    </div>
-          
-                    <div class="col pb-3">
-                      <input type="text" class="form-control" placeholder="Date" />
-                    </div>
-                    
-                    <div class="pb-3">
-                    <select class="form-select" aria-label="Default select example">
-                      <option selected>Category</option>
-                      <option value="1">Salary</option>
-                      <option value="2">eBay</option>
-                      <option value="3">Stock</option>
-                    </select>
-                </div>
-          
-                    <div class="col pb-4">
-                      <input type="text" class="form-control" placeholder="Comment" />
-                    </div>
+    <section id="navigation-bar">
+      <div class="modal position-static d-block bg-body-secondary p-4 md-5" tabindex="-1" role="dialog" id="modalSheet">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-4 shadow ">
+              <div class="gradient-custom-2 modal-header border-bottom-0" style="color: white;">
+                <h1 class="modal-title fs-5">Your balance</h1>
+              </div>
+              <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-4 border-top-0">
+              </div>
+              <div class="container">
+                <div class="row g-0 mb-5">
+                  <div class="col pb-3">
+                    <input type="text" class="form-control" placeholder="From" />
+                  </div>
+        
+                  <div class="col pb-3">
+                    <input type="text" class="form-control" placeholder="To" />
                   </div>
 
-                  <button type="button" class="btn btn-lg btn-primary mb-3" style="background-color: #ee7724"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
-                    <path d="M11 2H9v3h2z"/>
-                    <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
-                  </svg> Add revenue</button>
-                  <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-                  </svg> Close</button>
-                </div>  
-              </div>
-            </div>
-          </div>
-    </section>
+                  <div class="pb-3">
+                    <select class="form-select" aria-label="Default select example">
+                      <option selected>Category</option>
+                      <option value="1">All</option>
+                      <option value="2">Salary</option>
+                      <option value="3">eBay</option>
+                      <option value="4">Stock</option>
+                    </select>
+                </div>
+
+                  <h1 class="modal-title fs-5">Your revenue</h1>
+                  <table class="table">
+                   
+                    
+         <thead>
+           <tr>
+             <th scope="col">#</th>
+             <th scope="col">Date</th>
+             <th scope="col">Category</th>
+             <th scope="col">Amount</th>
+             <th scope="col">Comment</th>
+           </tr>
+         </thead>
+         <tbody>
+           <tr>
+             <th scope="row">1</th>
+             <td>22.11.2023r</td>
+             <td>Salary</td>
+             <td>200</td>
+             <td></td>
+           </tr>
+           <tr>
+             <th scope="row">2</th>
+             <td>23.11.2023r</td>
+             <td>eBay</td>
+             <td>200</td>
+             <td></td>
+           </tr>
+           <tr>
+             <th scope="row">3</th>
+             <td>24.11.2023r</td>
+             <td>Stock</td>
+             <td>200</td>
+             <td></td>
+             
+           </tr>
+           
+         </tbody>
+       </table>
+
+                <div class="row g-0">
+                  <h1 class="modal-title fs-5">Your expense</h1>
+                  <table class="table">
+         <thead>
+           <tr>
+             <th scope="col">#</th>
+             <th scope="col">Date</th>
+             <th scope="col">Category</th>
+             <th scope="col">Amount</th>
+             <th scope="col">Comment</th>
+           </tr>
+         </thead>
+         <tbody>
+           <tr>
+             <th scope="row">1</th>
+             <td>22.11.2023r</td>
+             <td>Salary</td>
+             <td>200</td>
+             <td></td>
+           </tr>
+           <tr>
+             <th scope="row">2</th>
+             <td>23.11.2023r</td>
+             <td>eBay</td>
+             <td>200</td>
+             <td></td>
+           </tr>
+           <tr>
+             <th scope="row">3</th>
+             <td>24.11.2023r</td>
+             <td>Stock</td>
+             <td>200</td>
+             <td></td>
+             
+           </tr>
+           
+         </tbody>
+       </table>
+                <div>
+                <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                </svg> Close</button>
+              </div>  
+        </div>
+  </section>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
