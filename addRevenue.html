@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Menu</title>
+    <title>Add revenue</title>
+    <script src="site.js"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -14,7 +15,6 @@
   </head>
 
   <body>
-
     <section id="navigation-bar">
       <nav class="navbar navbar-expand-lg bg-body-tertiary px-3">
         <div class="container-fluid">
@@ -80,53 +80,57 @@
       </nav>
     </section>
 
-     <section class="h-100" style="background-color: #eee;">
-      <div class="container py-0 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-          <div class="col-xl-10">
-            <div class="card rounded-3 ♠-black">
-              <div class="row g-0">
-                <div class="col-lg-6 d-flex align-items-center " style="background-color: #eee; color;">
-                  <div class="text-white px-3 py-4 p-md-5 mx-md-1">
-                    <h2 class="mb-4 fontColor">How to use?
-                    </h2>
-                    <div class= "fontColor" style="font-size: 18px;">
-                    <p class="small mb-0" >
-                      <ol >
-                        <li >Set Up Your Budget: Once you've created an account, the app will guide you through the process of setting up your budget. This typically involves entering your income, expenses, and financial goals.</li>
-                        <li style="padding-top: 5%;">Track Your Expenses: Start tracking your expenses by linking your bank accounts or manually entering transactions. The app will categorize your expenses and provide insights into your spending habits.</li>
-                        <li style="padding-top: 5%;">Monitor Your Budget: Regularly check your budget app to monitor your progress. It will show you how much you've spent in each category and whether you're staying within your budget.</li>
-                        </ol>
-                    </p>
-                  </div>
-                  </div>
+    <section id="navigation-bar">
+        <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 md-5" tabindex="-1" role="dialog" id="modalSheet">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content rounded-4 shadow ">
+                <div class="gradient-custom-2 modal-header border-bottom-0" style="color: white;">
+                  <h1 class="modal-title fs-5">Adding new revenue</h1>
                 </div>
-                <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
-                  <div class="text-white px-3 py-4 p-md-5 mx-md-4">
-                    <h2 class="mb-4">Achieve your goal with us 
-                      
-                      <div class="text-center mt-5">
-                        <img src="./sources/green-money.jpg"
-                        style="border-radius: 10px; width: 295px;" alt="orange wallet with money">
-                      </div>
-                      
-                      <div class="text-center mt-5">
-                        <img src="./sources/chart.jpg"
-                        style="border-radius: 10px; width: 295px;" alt="orange wallet with money">
-                      </div>
-                      
-                    </h2>
-                  </div>
+
+                <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-4 border-top-0">
                 </div>
+                <div class="container">
+    
+                    <div class="col pb-3">
+                      <input type="text" class="form-control" placeholder=" Amount" />
+                    </div>
+          
+                    <div class="col pb-3">
+                      <input type="text" class="form-control" placeholder="Date" />
+                    </div>
+                    
+                    <div class="pb-3">
+                    <select class="form-select" aria-label="Default select example">
+                      <option selected>Category</option>
+                      <option value="1">Salary</option>
+                      <option value="2">eBay</option>
+                      <option value="3">Stock</option>
+                    </select>
+                </div>
+          
+                    <div class="col pb-4">
+                      <input type="text" class="form-control" placeholder="Comment" />
+                    </div>
+                  </div>
+
+                  <button type="button" class="btn btn-lg btn-primary mb-3" style="background-color: #ee7724"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
+                    <path d="M11 2H9v3h2z"/>
+                    <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
+                  </svg> Add revenue</button>
+                  <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                  </svg> Close</button>
+                </div>  
               </div>
             </div>
           </div>
-        </div>
-      </div>
     </section>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-    crossorigin="anonymous"></script>
 
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

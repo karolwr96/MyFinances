@@ -30,6 +30,12 @@ body {
     border-bottom-right-radius: 0.3rem;
   }
 }
+@media (min-width: 769px) {
+  .gradient-custom-balance {
+    border-top-right-radius: 0.3rem;
+    border-bottom-right-radius: 0.3rem;
+  }
+}
 
 .newFont {
   font-size: 23px;
