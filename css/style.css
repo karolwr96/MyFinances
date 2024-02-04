@@ -19,6 +19,11 @@ body {
   background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
 }
 
+.error {
+  color: red;
+  margin-bottom: 15px;
+}
+
 @media (min-width: 768px) {
   .gradient-form {
     height: 100vh !important;
@@ -41,7 +46,7 @@ body {
   font-size: 23px;
 }
 
-.fontColor{
+.fontColor {
   color: black;
 }
 
