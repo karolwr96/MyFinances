@@ -9,8 +9,38 @@ if (isset($_POST['email'])) {
     $okValidation = false;
     $_SESSION['e_userName'] = "User name must contain between 3 and 20 characters.";
   }
+  if (!ctype_alnum($userName)) {
+    $okValidation = false;
+    $_SESSION['e_userName'] = "User name can only consist of letters and numbers.";
+  }
 
-  if ($okValidation == true) {
+  $email = $_POST['email'];
+  $emailSafe = filter_var($email, FILTER_SANITIZE_EMAIL);
+  if (filter_var($emailSafe, FILTER_VALIDATE_EMAIL) == false || ($emailSafe != $email)) {
+    $okValidation = false;
+    $_SESSION['e_email'] = "Please provide a correct email address.";
+  }
+
+  $password1 = $_POST['password1'];
+  $password2 = $_POST['password2'];
+  if (strlen($password1) < 8) {
+    $okValidation = false;
+    $_SESSION['e_password'] = "Password must contain at least 8 characters.";
+  }
+  if ($password1!=$password2) {
+    $okValidation = false;
+    $_SESSION['e_password'] = "The passwords provided are not the same.";
+  }
+  $hashPassword = password_hash($password1, PASSWORD_DEFAULT);
+
+  if(!isset($_POST['checkbox'])){
+    $okValidation = false;
+    $_SESSION['e_checkbox'] = "Accept the regulations.";
+  }
+
+  require_once"DBconnect.php";
+
+  if ($okValidation) {
     echo "All correct";
     exit();
   }
@@ -68,6 +98,12 @@ if (isset($_POST['email'])) {
                           <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
                         </svg> Email address</label>
                     </div>
+                    <?php
+                    if (isset($_SESSION['e_email'])) {
+                      echo '<div class="error">' . $_SESSION['e_email'] . '</div>';
+                      unset($_SESSION['e_email']);
+                    }
+                    ?>
 
                     <div class="form-outline mb-2">
                       <input type="password" name="password1" id="form3Example4" class="form-control" />
@@ -75,6 +111,12 @@ if (isset($_POST['email'])) {
                           <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
                         </svg> Password</label>
                     </div>
+                    <?php
+                    if (isset($_SESSION['e_password'])) {
+                      echo '<div class="error">' . $_SESSION['e_password'] . '</div>';
+                      unset($_SESSION['e_password']);
+                    }
+                    ?>
 
                     <div class="form-outline mb-2">
                       <input type="password" name="password2" id="form3Example4" class="form-control" />
@@ -84,11 +126,17 @@ if (isset($_POST['email'])) {
                     </div>
 
                     <div class="form-check d-flex justify-content-center mb-4">
-                      <input class="form-check-input me-2" type="checkbox" value="" id="form2Example33" checked />
+                      <input class="form-check-input me-2" type="checkbox" name="checkbox" value="" id="form2Example33" />
                       <label class="form-check-label" for="form2Example33">
-                        Subscribe to our newsletter
+                      I accept the terms
                       </label>
                     </div>
+                    <?php
+                    if (isset($_SESSION['e_checkbox'])) {
+                      echo '<div class="error">' . $_SESSION['e_checkbox'] . '</div>';
+                      unset($_SESSION['e_checkbox']);
+                    }
+                    ?>
 
                     <div class="text-center pt-1 mb-1 pb-1">
                       <button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
