@@ -24,6 +24,11 @@ body {
   margin-bottom: 15px;
 }
 
+.success {
+  color: green;
+  margin-bottom: 15px;
+}
+
 @media (min-width: 768px) {
   .gradient-form {
     height: 100vh !important;
