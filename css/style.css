@@ -27,7 +27,16 @@ body {
 .success {
   color: green;
   margin-bottom: 15px;
+  text-decoration: none;
 }
+
+<style>
+    a{color: black;}
+    a:link {text-decoration: none}
+    a:visited {text-decoration: none}
+    a:active {text-decoration: none}
+    a:hover {text-decoration: underline}
+</style>
 
 @media (min-width: 768px) {
   .gradient-form {
