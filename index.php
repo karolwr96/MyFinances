@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 require_once "DBconnect.php";
 mysqli_report(MYSQLI_REPORT_STRICT);
 try {
@@ -7,28 +9,32 @@ try {
   if ($connect->connect_errno != 0) {
     throw new Exception(mysqli_connect_errno());
   } else {
-    //if (isset($_POST['email'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    //}
+    if (isset($_POST['email'])) {
+      $email = $_POST['email'];
+      $password = $_POST['password'];
 
-    $loggingQuery = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
 
-    if ($loggingResult = $connect->query($loggingQuery)) {
-      $howManyUsers = $loggingResult->num_rows;
-      if ($howManyUsers > 0) {
-        $row = $loggingResult->fetch_assoc();
-        //if (password_verify($password, $row['password'])) {
-          if ($password == $row['password']) {
-          header('Location:logged.html');
+      $loggingQuery = "SELECT * FROM users WHERE email = '$email'"; // AND password = '$password'";
+
+      if ($loggingResult = $connect->query($loggingQuery)) {
+        $howManyUsers = $loggingResult->num_rows;
+        if ($howManyUsers > 0) {
+          $row = $loggingResult->fetch_assoc();
+          if (password_verify($password, $row['password'])) {
+            //  if ($password == $row['password']) {
+            $_SESSION['isUserLoggedIn'] = true;
+            header('Location:logged.php');
+          } else {
+            echo 'Wrong email or password.';
+          }
+        } else {
+          echo 'Wrong email or password.';
         }
       } else {
-        echo 'Wrong password';
+        throw new Exception(mysqli_connect_errno());
       }
-    } else {
-      throw new Exception(mysqli_connect_errno());
+      $connect->close();
     }
-    $connect->close();
   }
 } catch (Exception $error) {
   echo 'Server error';

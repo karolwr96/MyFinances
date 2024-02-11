@@ -221,7 +221,7 @@ if (isset($_SESSION['e_checkbox'])) {
                     <?php
                     if (isset($_SESSION['successfulRegistration'])) {
                       //echo '<div class="text-center success">' . $_SESSION['successfulMessage'] . '</div>';
-                      echo '<a href="index.html">
+                      echo '<a href="index.php">
                       <div class="text-center success">
                       Registration successful. Click to log in.
                       </div>
