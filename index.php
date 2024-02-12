@@ -23,6 +23,7 @@ try {
           if (password_verify($password, $row['password'])) {
             //  if ($password == $row['password']) {
             $_SESSION['isUserLoggedIn'] = true;
+            $_SESSION['idLoggedInUser'] = $row['id'];
             header('Location:logged.php');
           } else {
             echo 'Wrong email or password.';

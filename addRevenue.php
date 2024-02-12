@@ -7,6 +7,47 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
   exit();
 }
 
+if (isset($_POST['formSum'])) { {
+
+    // $okValidation = true;
+    // $_SESSION['formSum'] = $revenueSum;
+    // $_SESSION['formDate'] = $revenueDate;
+    // $_SESSION['formCategory'] = $revenueCategory;
+    // $_SESSION['formComment'] = $revenueComment;
+    //$_SESSION['idLoggedInUser'] = $userId;
+
+    $revenueSum = $_POST['formSum'];
+    $revenueDate = $_POST['formDate'];
+    $revenueCategory = $_POST['formCategory'];
+    $revenueComment = $_POST['formComment'];
+    $userId =  $_SESSION['idLoggedInUser'];
+
+    $okValidation = true;
+
+    require_once "DBconnect.php";
+    mysqli_report(MYSQLI_REPORT_STRICT);
+    try {
+      $connect = new mysqli($host, $db_user, $db_password, $db_name);
+      if ($connect->connect_errno != 0) {
+        throw new Exception(mysqli_connect_errno());
+      } else {
+        if ($okValidation) {
+          if ($connect->query("INSERT INTO incomes VALUES (NULL, '$userId', 5, '$revenueSum', '$revenueDate', '$revenueComment')")) {
+            // $_SESSION['successfulRegistration'] = true;
+            // $_SESSION['successfulMessage'] = "Registration successful. Click to log";
+            echo '<script>alert("SUKCES!")</script>';
+          } else {
+            throw new Exception(mysqli_connect_errno());
+          }
+        }
+        $connect->close();
+      }
+    } catch (Exception $error) {
+      echo 'Server error';
+    }
+  }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -49,7 +90,7 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
                 Add expense</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="./showBalance.html"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-spreadsheet" viewBox="0 0 16 16">
+              <a class="nav-link active" href="./showBalance.php"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-spreadsheet" viewBox="0 0 16 16">
                   <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h3v2H6zm4 0v-2h3v1a1 1 0 0 1-1 1h-2zm3-3h-3v-2h3v2zm-7 0v-2h3v2H6z" />
                 </svg>
                 View balance sheet</a>
@@ -64,7 +105,7 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
           </ul>
 
           <div>
-            <a href="./index.html" class="btn btn-outline-danger" role="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+            <a href="./logout.php" class="btn btn-outline-danger" role="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
                 <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
               </svg>
@@ -76,58 +117,60 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
   </section>
 
   <section id="add-Revenue-menu">
-    <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 md-5" tabindex="-1" role="dialog" id="modalSheet">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content rounded-4 shadow">
-          <div class="gradient-custom-2 modal-header border-bottom-0" style="color: white">
-            <h1 class="modal-title fs-5">Adding new revenue</h1>
-          </div>
-
-          <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-4 border-top-0"></div>
-          <div class="container">
-            <div class="col pb-3">
-              <input type="number" class="form-control" placeholder=" Amount" />
+    <form method="post">
+      <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 md-5" tabindex="-1" role="dialog" id="modalSheet">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content rounded-4 shadow">
+            <div class="gradient-custom-2 modal-header border-bottom-0" style="color: white">
+              <h1 class="modal-title fs-5">Adding new revenue</h1>
             </div>
 
-            <div class="col pb-3">
-              <input type="date" class="form-control" placeholder="Date" />
+            <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-4 border-top-0"></div>
+            <div class="container">
+              <div class="col pb-3">
+                <input type="number" step="0.01" name="formSum" class="form-control" placeholder=" Amount" />
+              </div>
+
+              <div class="col pb-3">
+                <input type="date" name="formDate" class="form-control" placeholder="Date" />
+              </div>
+
+              <div class="pb-3">
+                <select class="form-select" name="formCategory" aria-label="Default select example">
+                  <!--option selected>Category</option>*/-->
+                  <?php
+                  <option value="1">Salary</option>
+                  ?>
+                </select>
+              </div>
+
+              <div class="col pb-4">
+                <input type="text" name="formComment" class="form-control" placeholder="Comment" />
+              </div>
             </div>
 
-            <div class="pb-3">
-              <select class="form-select" aria-label="Default select example">
-                <option selected>Category</option>
-                <option value="1">Salary</option>
-                <option value="2">eBay</option>
-                <option value="3">Stock</option>
-              </select>
+            <div class="text-center">
+              <button type="submit" class="btn btn-lg btn-primary mb-3" style="background-color: #ee7724; width: 40%">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
+                  <path d="M11 2H9v3h2z" />
+                  <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z" />
+                </svg>
+                Add revenue
+              </button>
             </div>
 
-            <div class="col pb-4">
-              <input type="text" class="form-control" placeholder="Comment" />
+            <div class="text-center pb-4">
+              <button type="button" class="btn btn-lg btn-secondary mb-5;" style="width: 40%" data-bs-dismiss="modal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+                Close
+              </button>
             </div>
-          </div>
-
-          <div class="text-center">
-            <button type="button" class="btn btn-lg btn-primary mb-3" style="background-color: #ee7724; width: 40%">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
-                <path d="M11 2H9v3h2z" />
-                <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z" />
-              </svg>
-              Add revenue
-            </button>
-          </div>
-
-          <div class="text-center pb-4">
-            <button type="button" class="btn btn-lg btn-secondary mb-5;" style="width: 40%" data-bs-dismiss="modal">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
-              </svg>
-              Close
-            </button>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
