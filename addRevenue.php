@@ -7,6 +7,34 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
   exit();
 }
 
+require_once "DBconnect.php";
+mysqli_report(MYSQLI_REPORT_STRICT);
+try {
+  $connect = new mysqli($host, $db_user, $db_password, $db_name);
+  if ($connect->connect_errno != 0) {
+    throw new Exception(mysqli_connect_errno());
+  } else {
+
+    $connect = new mysqli($host, $db_user, $db_password, $db_name);
+    $userCategoryQuery = "SELECT * FROM incomes_category_assigned_to_users WHERE user_id = '1'";
+
+    $queryResult = $connect->query($userCategoryQuery);
+
+    $_SESSION['howManyRowsToCheck'] = $queryResult->num_rows;
+
+    $row = $queryResult->fetch_all();
+
+    $_SESSION['userCategory'] = array();
+    for ($i = 0; $i < $_SESSION['howManyRowsToCheck']; $i++) {
+      $_SESSION['userCategory[i]'] = $row['name'];
+    }
+    $connect->close();
+  }
+} catch (Exception $error) {
+  echo 'Server error';
+}
+
+
 if (isset($_POST['formSum'])) { {
 
     // $okValidation = true;
@@ -137,9 +165,12 @@ if (isset($_POST['formSum'])) { {
 
               <div class="pb-3">
                 <select class="form-select" name="formCategory" aria-label="Default select example">
-                  <!--option selected>Category</option>*/-->
                   <?php
-                  <option value="1">Salary</option>
+                  for ($i = 1; $i <= $_SESSION['howManyRowsToCheck']; $i++) {
+                  ?>
+                    <option value="<?= $row['name'] ?>"><?= $row['name'] ?></option>
+                  <?php
+                  }
                   ?>
                 </select>
               </div>
