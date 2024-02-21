@@ -61,11 +61,10 @@ if (isset($_POST['email'])) {
           $queryResult = $connect->query($idNewUserQuery);
           $row = $queryResult->fetch_assoc();
           $idNewUser = $row['id'];
-          echo $idNewUser;
-
-          $addDefaultIncomesCategoryQuery = "INSERT INTO incomes_category_assigned_to_users (`$idNewUser`, `name`)		
-                                        SELECT $idNewUser, `name` FROM incomes_category_default	";
+          // echo $idNewUser;
+          $addDefaultIncomesCategoryQuery = "INSERT INTO incomes_category_assigned_to_users (user_id, name) SELECT '$idNewUser', name FROM incomes_category_default";
           $connect->query($addDefaultIncomesCategoryQuery);
+
         } else {
           throw new Exception(mysqli_connect_errno());
         }
