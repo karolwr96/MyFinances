@@ -56,19 +56,20 @@ if (isset($_POST['email'])) {
       if ($okValidation) {
         if ($connect->query("INSERT INTO users VALUES (NULL, '$userName', '$hashPassword', '$email')")) {
           $_SESSION['successfulRegistration'] = true;
-          // $_SESSION['successfulMessage'] = "Registration successful. Click to log";
+
+          $idNewUserQuery = "SELECT id FROM users WHERE email = '$email'";
+          $queryResult = $connect->query($idNewUserQuery);
+          $row = $queryResult->fetch_assoc();
+          $idNewUser = $row['id'];
+          echo $idNewUser;
+
+          $addDefaultIncomesCategoryQuery = "INSERT INTO incomes_category_assigned_to_users (`$idNewUser`, `name`)		
+                                        SELECT $idNewUser, `name` FROM incomes_category_default	";
+          $connect->query($addDefaultIncomesCategoryQuery);
         } else {
           throw new Exception(mysqli_connect_errno());
         }
       }
-      $idNewUserQuery = "SELECT id FROM users WHERE email = '$email'";
-      $queryResult = $connect->query($idNewUserQuery);
-      $row = $queryResult->fetch_assoc();
-      $idNewUser = $row['id'];
-      echo $idNewUser;
-     // $connect->query("INSERT INTO incomes_category_assigned_to_users  
-               //        SELECT :incomes_category_default.id, 5, `incomes_category_default.name` 
-                //       FROM incomes_category_default");
       $connect->close();
     }
   } catch (Exception $error) {

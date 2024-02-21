@@ -16,14 +16,16 @@ try {
   } else {
 
     $connect = new mysqli($host, $db_user, $db_password, $db_name);
-    $userCategoryQuery = "SELECT * FROM incomes_category_assigned_to_users WHERE user_id = '1'";
+    $userCategoryQuery = "SELECT * 
+                          FROM incomes_category_assigned_to_users 
+                          WHERE user_id = '$_SESSION[idLoggedInUser]'";
     $queryResult = $connect->query($userCategoryQuery);
     $rows = $queryResult->fetch_all(MYSQLI_ASSOC);
 
-    foreach ($rows as $row) {
-     // printf("%s (%s)\n", $row["id"], $row["name"]);
-     echo $row["name"];
-  }
+   // foreach ($rows as $row) {
+    // echo $row["name"];
+   //  echo $_POST["formCategory"];
+  //}
 
     //$_SESSION['howManyRowsToCheck'] = $queryResult->num_rows;
     //echo $_SESSION['howManyRowsToCheck'];
@@ -70,7 +72,13 @@ if (isset($_POST['formSum'])) { {
         throw new Exception(mysqli_connect_errno());
       } else {
         if ($okValidation) {
-          if ($connect->query("INSERT INTO incomes VALUES (NULL, '$userId', 5, '$revenueSum', '$revenueDate', '$revenueComment')")) {
+
+          $incomeCategoryIdQuery = "SELECT id FROM incomes_category_assigned_to_users WHERE user_id = '$userId' AND name = '$revenueCategory'"   ;
+          $queryResult = $connect->query($incomeCategoryIdQuery);
+          $row = $queryResult->fetch_assoc();
+          $idCurrentCategory = $row['id'];
+
+          if ($connect->query("INSERT INTO incomes VALUES (NULL, '$userId', '$idCurrentCategory', '$revenueSum', '$revenueDate', '$revenueComment')")) {
             // $_SESSION['successfulRegistration'] = true;
             // $_SESSION['successfulMessage'] = "Registration successful. Click to log";
             echo '<script>alert("SUKCES!")</script>';
@@ -174,7 +182,7 @@ if (isset($_POST['formSum'])) { {
               </div>
 
               <div class="pb-3">
-                <select class="form-select" name="formCategory" aria-label="Default select example">
+                <select class="form-select" name="formCategory" aria-label="Default select example" value="">
                   <?php
                   foreach ($rows as $row) {
                   ?>
