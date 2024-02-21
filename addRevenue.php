@@ -17,17 +17,27 @@ try {
 
     $connect = new mysqli($host, $db_user, $db_password, $db_name);
     $userCategoryQuery = "SELECT * FROM incomes_category_assigned_to_users WHERE user_id = '1'";
-
     $queryResult = $connect->query($userCategoryQuery);
+    $rows = $queryResult->fetch_all(MYSQLI_ASSOC);
 
-    $_SESSION['howManyRowsToCheck'] = $queryResult->num_rows;
+    foreach ($rows as $row) {
+     // printf("%s (%s)\n", $row["id"], $row["name"]);
+     echo $row["name"];
+  }
 
-    $row = $queryResult->fetch_all();
+    //$_SESSION['howManyRowsToCheck'] = $queryResult->num_rows;
+    //echo $_SESSION['howManyRowsToCheck'];
 
-    $_SESSION['userCategory'] = array();
-    for ($i = 0; $i < $_SESSION['howManyRowsToCheck']; $i++) {
-      $_SESSION['userCategory[i]'] = $row['name'];
-    }
+
+    //$_SESSION['abc'] = $row['name'];
+    //echo $_SESSION['abc'];
+
+   // $row = $queryResult->fetch_all();
+
+    // $_SESSION['userCategory'] = array();
+    // for ($i = 0; $i < $_SESSION['howManyRowsToCheck']; $i++) {
+    //  $_SESSION['userCategory[i]'] = $row['name'];
+    // }
     $connect->close();
   }
 } catch (Exception $error) {
@@ -166,7 +176,7 @@ if (isset($_POST['formSum'])) { {
               <div class="pb-3">
                 <select class="form-select" name="formCategory" aria-label="Default select example">
                   <?php
-                  for ($i = 1; $i <= $_SESSION['howManyRowsToCheck']; $i++) {
+                  foreach ($rows as $row) {
                   ?>
                     <option value="<?= $row['name'] ?>"><?= $row['name'] ?></option>
                   <?php

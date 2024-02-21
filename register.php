@@ -61,6 +61,14 @@ if (isset($_POST['email'])) {
           throw new Exception(mysqli_connect_errno());
         }
       }
+      $idNewUserQuery = "SELECT id FROM users WHERE email = '$email'";
+      $queryResult = $connect->query($idNewUserQuery);
+      $row = $queryResult->fetch_assoc();
+      $idNewUser = $row['id'];
+      echo $idNewUser;
+     // $connect->query("INSERT INTO incomes_category_assigned_to_users  
+               //        SELECT :incomes_category_default.id, 5, `incomes_category_default.name` 
+                //       FROM incomes_category_default");
       $connect->close();
     }
   } catch (Exception $error) {
