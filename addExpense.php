@@ -15,13 +15,21 @@ try {
     throw new Exception(mysqli_connect_errno());
   } else {
 
+    //getting expenses categories
     $connect = new mysqli($host, $db_user, $db_password, $db_name);
     $userCategoryQuery = "SELECT * 
-                          FROM incomes_category_assigned_to_users 
+                          FROM expenses_category_assigned_to_users 
                           WHERE user_id = '$_SESSION[idLoggedInUser]'";
     $queryResult = $connect->query($userCategoryQuery);
     $rows = $queryResult->fetch_all(MYSQLI_ASSOC);
 
+    //getting payment methods
+    $connect = new mysqli($host, $db_user, $db_password, $db_name);
+    $paymentMethodsQuery = "SELECT * 
+                          FROM payment_methods_assigned_to_users
+                          WHERE user_id = '$_SESSION[idLoggedInUser]'";
+    $queryResult = $connect->query($paymentMethodsQuery);
+    $rowsWithPayment = $queryResult->fetch_all(MYSQLI_ASSOC);
     $connect->close();
   }
 } catch (Exception $error) {
@@ -37,10 +45,11 @@ if (isset($_POST['formSum'])) { {
     // $_SESSION['formComment'] = $revenueComment;
     //$_SESSION['idLoggedInUser'] = $userId;
 
-    $revenueSum = $_POST['formSum'];
-    $revenueDate = $_POST['formDate'];
-    $revenueCategory = $_POST['formCategory'];
-    $revenueComment = $_POST['formComment'];
+    $expenseSum = $_POST['formSum'];
+    $expenseDate = $_POST['formDate'];
+    $expenseCategory = $_POST['formCategory'];
+    $expenseComment = $_POST['formComment'];
+    $paymentMethod = $_POST['formPaymentMethod'];
     $userId =  $_SESSION['idLoggedInUser'];
 
     $okValidation = true;
@@ -53,13 +62,17 @@ if (isset($_POST['formSum'])) { {
         throw new Exception(mysqli_connect_errno());
       } else {
         if ($okValidation) {
-
-          $incomeCategoryIdQuery = "SELECT id FROM incomes_category_assigned_to_users WHERE user_id = '$userId' AND name = '$revenueCategory'";
-          $queryResult = $connect->query($incomeCategoryIdQuery);
+          $expenseCategoryIdQuery = "SELECT id FROM expenses_category_assigned_to_users WHERE user_id = '$userId' AND name = '$expenseCategory'";
+          $queryResult = $connect->query($expenseCategoryIdQuery);
           $row = $queryResult->fetch_assoc();
-          $idCurrentCategory = $row['id'];
+          $idCurrentExpenseCategory = $row['id'];
 
-          if ($connect->query("INSERT INTO incomes VALUES (NULL, '$userId', '$idCurrentCategory', '$revenueSum', '$revenueDate', '$revenueComment')")) {
+          $paymentMethodIdQuery = "SELECT id FROM payment_methods_assigned_to_users WHERE user_id = '$userId' AND name = '$paymentMethod'";
+          $queryResult = $connect->query($paymentMethodIdQuery);
+          $row = $queryResult->fetch_assoc();
+          $idCurrentPaymentMethod = $row['id'];
+
+          if ($connect->query("INSERT INTO expenses VALUES (NULL, '$userId', '$idCurrentExpenseCategory', '$idCurrentPaymentMethod','$expenseSum ', '$expenseDate ', '$expenseComment')")) {
             echo '<script>alert("SUKCES!")</script>';
           } else {
             throw new Exception(mysqli_connect_errno());
@@ -81,7 +94,7 @@ if (isset($_POST['formSum'])) { {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Add revenue</title>
+  <title>Add expense</title>
   <script src="site.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous" />
   <link rel="stylesheet" href="./css/style.css" />
@@ -147,7 +160,7 @@ if (isset($_POST['formSum'])) { {
         <div class="modal-dialog" role="document">
           <div class="modal-content rounded-4 shadow">
             <div class="gradient-custom-2 modal-header border-bottom-0" style="color: white">
-              <h1 class="modal-title fs-5">Adding new revenue</h1>
+              <h1 class="modal-title fs-5">Adding new expense</h1>
             </div>
 
             <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-4 border-top-0"></div>
@@ -172,6 +185,18 @@ if (isset($_POST['formSum'])) { {
                 </select>
               </div>
 
+              <div class="pb-3">
+                <select class="form-select" name="formPaymentMethod" aria-label="Default select example" value="">
+                  <?php
+                  foreach ($rowsWithPayment as $row) {
+                  ?>
+                    <option value="<?= $row['name'] ?>"><?= $row['name'] ?></option>
+                  <?php
+                  }
+                  ?>
+                </select>
+              </div>
+
               <div class="col pb-4">
                 <input type="text" name="formComment" class="form-control" placeholder="Comment" />
               </div>
@@ -183,7 +208,7 @@ if (isset($_POST['formSum'])) { {
                   <path d="M11 2H9v3h2z" />
                   <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z" />
                 </svg>
-                Add revenue
+                Add expense
               </button>
             </div>
 
