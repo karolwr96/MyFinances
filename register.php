@@ -53,18 +53,34 @@ if (isset($_POST['email'])) {
     if ($connect->connect_errno != 0) {
       throw new Exception(mysqli_connect_errno());
     } else {
+      //Does email exist?
+      $doesEmailExist = $connect->query("SELECT id FROM users WHERE email='$email'");
+      if (!$doesEmailExist) {
+        throw new Exception($connect->error);
+      }
+      $isThatEmailInDB = $doesEmailExist->num_rows;
+      if ($isThatEmailInDB > 0) {
+        $okValidation = false;
+        $_SESSION['e_email'] = "There is already an account associated with this email address!";
+      }
+
       if ($okValidation) {
         if ($connect->query("INSERT INTO users VALUES (NULL, '$userName', '$hashPassword', '$email')")) {
           $_SESSION['successfulRegistration'] = true;
 
+          //Addind deafult category to new user
           $idNewUserQuery = "SELECT id FROM users WHERE email = '$email'";
           $queryResult = $connect->query($idNewUserQuery);
           $row = $queryResult->fetch_assoc();
           $idNewUser = $row['id'];
-          // echo $idNewUser;
           $addDefaultIncomesCategoryQuery = "INSERT INTO incomes_category_assigned_to_users (user_id, name) SELECT '$idNewUser', name FROM incomes_category_default";
           $connect->query($addDefaultIncomesCategoryQuery);
 
+          $addDefaultExpensesCategoryQuery = "INSERT INTO expenses_category_assigned_to_users (user_id, name) SELECT '$idNewUser', name FROM expenses_category_default";
+          $connect->query($addDefaultExpensesCategoryQuery);
+
+          $addDefaultPaymentMethodsQuery = "INSERT INTO payment_methods_assigned_to_users (user_id, name) SELECT '$idNewUser', name FROM payment_methods_default";
+          $connect->query($addDefaultPaymentMethodsQuery);
         } else {
           throw new Exception(mysqli_connect_errno());
         }
@@ -76,36 +92,7 @@ if (isset($_POST['email'])) {
   }
 }
 
-if (isset($_SESSION['formUsername'])) {
-  unset($_SESSION['formUsername']);
-}
-if (isset($_SESSION['formEmail'])) {
-  unset($_SESSION['formEmail']);
-}
-if (isset($_SESSION['formPassword1'])) {
-  unset($_SESSION['formPassword1']);
-}
-if (isset($_SESSION['formPassword2'])) {
-  unset($_SESSION['formPassword2']);
-}
-if (isset($_SESSION['formRegulations'])) {
-  unset($_SESSION['formRegulations']);
-}
-
-if (isset($_SESSION['e_userName'])) {
-  unset($_SESSION['e_userName']);
-}
-if (isset($_SESSION['e_email'])) {
-  unset($_SESSION['e_email']);
-}
-if (isset($_SESSION['e_password'])) {
-  unset($_SESSION['e_password']);
-}
-if (isset($_SESSION['e_checkbox'])) {
-  unset($_SESSION['e_checkbox']);
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -228,7 +215,6 @@ if (isset($_SESSION['e_checkbox'])) {
                     </div>
                     <?php
                     if (isset($_SESSION['successfulRegistration'])) {
-                      //echo '<div class="text-center success">' . $_SESSION['successfulMessage'] . '</div>';
                       echo '<a href="index.php">
                       <div class="text-center success">
                       Registration successful. Click to log in.

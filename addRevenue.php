@@ -22,30 +22,11 @@ try {
     $queryResult = $connect->query($userCategoryQuery);
     $rows = $queryResult->fetch_all(MYSQLI_ASSOC);
 
-   // foreach ($rows as $row) {
-    // echo $row["name"];
-   //  echo $_POST["formCategory"];
-  //}
-
-    //$_SESSION['howManyRowsToCheck'] = $queryResult->num_rows;
-    //echo $_SESSION['howManyRowsToCheck'];
-
-
-    //$_SESSION['abc'] = $row['name'];
-    //echo $_SESSION['abc'];
-
-   // $row = $queryResult->fetch_all();
-
-    // $_SESSION['userCategory'] = array();
-    // for ($i = 0; $i < $_SESSION['howManyRowsToCheck']; $i++) {
-    //  $_SESSION['userCategory[i]'] = $row['name'];
-    // }
     $connect->close();
   }
 } catch (Exception $error) {
   echo 'Server error';
 }
-
 
 if (isset($_POST['formSum'])) { {
 
@@ -73,14 +54,12 @@ if (isset($_POST['formSum'])) { {
       } else {
         if ($okValidation) {
 
-          $incomeCategoryIdQuery = "SELECT id FROM incomes_category_assigned_to_users WHERE user_id = '$userId' AND name = '$revenueCategory'"   ;
+          $incomeCategoryIdQuery = "SELECT id FROM incomes_category_assigned_to_users WHERE user_id = '$userId' AND name = '$revenueCategory'";
           $queryResult = $connect->query($incomeCategoryIdQuery);
           $row = $queryResult->fetch_assoc();
           $idCurrentCategory = $row['id'];
 
           if ($connect->query("INSERT INTO incomes VALUES (NULL, '$userId', '$idCurrentCategory', '$revenueSum', '$revenueDate', '$revenueComment')")) {
-            // $_SESSION['successfulRegistration'] = true;
-            // $_SESSION['successfulMessage'] = "Registration successful. Click to log";
             echo '<script>alert("SUKCES!")</script>';
           } else {
             throw new Exception(mysqli_connect_errno());
