@@ -7,6 +7,33 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
   exit();
 }
 
+if (isset($_POST['fromDate'])) {
+  $startDate = $_POST['fromDate'];
+  $endDate = $_POST['toDate'];
+}
+
+$userId =  $_SESSION['idLoggedInUser'];
+
+require_once "DBconnect.php";
+mysqli_report(MYSQLI_REPORT_STRICT);
+try {
+  $connect = new mysqli($host, $db_user, $db_password, $db_name);
+  if ($connect->connect_errno != 0) {
+    throw new Exception(mysqli_connect_errno());
+  } else {
+    $showIncomesBalanceQuery = "SELECT incomes_category_assigned_to_users.name AS category, SUM(incomes.amount) AS amount FROM incomes_category_assigned_to_users INNER JOIN incomes ON incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id WHERE incomes.user_id = '$userId' AND incomes.date_of_income  BETWEEN '$startDate' AND '$endDate' GROUP BY incomes.income_category_assigned_to_user_id ORDER BY amount DESC;";
+    if ($queryResult = $connect->query($showIncomesBalanceQuery)) {
+      $arrayWithResult = $queryResult->fetch_all();
+    } else {
+      echo '<script>alert("FALSE!")</script>';
+    }
+
+    $connect->close();
+  }
+} catch (Exception $error) {
+  echo 'Server error';
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -88,102 +115,55 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
         </div>
         <div class="container mt-3">
           <div class="row g-0 mb-5">
-            <div class="col pb-3">
-              <input type="date" class="form-control" placeholder="From" />
-            </div>
+            <form method="post">
 
-            <div class="col pb-3">
-              <input type="date" class="form-control" placeholder="To" />
-            </div>
+              <div class="col pb-3">
+                <input type="date" name="fromDate" class="form-control" placeholder="From" />
+              </div>
+
+              <div class="col pb-3">
+                <input type="date" name="toDate" class="form-control" placeholder="To" />
+              </div>
+
+              <div class="text-center">
+                <button type="submit" class="btn btn-lg btn-secondary" style="width: 25%" data-bs-dismiss="modal">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                  </svg>
+                  Show balance
+                </button>
+              </div>
+            </form>
 
             <div class="pb-3">
-              <select class="form-select" aria-label="Default select example">
-                <option selected>Category</option>
-                <option value="1">All</option>
-                <option value="2">Salary</option>
-                <option value="3">eBay</option>
-                <option value="4">Stock</option>
-              </select>
-
               <h1 class="modal-title fs-5 my-3" style="font-weight: bold">
-                Your revenue
+
               </h1>
-              <table class="table">
+
+              <table>
                 <thead>
                   <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Comment</th>
+                    <th colspan="2">Your revenue</th>
+                  </tr>
+                  <tr>
+                    <th>Category</th>
+                    <th>Amount</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>22.11.2023r</td>
-                    <td>Salary</td>
-                    <td>200</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>23.11.2023r</td>
-                    <td>eBay</td>
-                    <td>200</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>24.11.2023r</td>
-                    <td>Stock</td>
-                    <td>200</td>
-                    <td></td>
-                  </tr>
+                  <?php
+                  foreach ($arrayWithResult as $row) {
+                    echo "<tr>
+                    <td>{$row['0']}</td>
+                    <td>{$row['1']}</td>
+                    </tr>";
+                  }
+                  ?>
                 </tbody>
               </table>
 
-              <div class="row g-0">
-                <h1 class="modal-title fs-5 my-3" style="font-weight: bold">
-                  Your expense
-                </h1>
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Date</th>
-                      <th scope="col">Category</th>
-                      <th scope="col">Amount</th>
-                      <th scope="col">Comment</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>22.11.2023r</td>
-                      <td>Salary</td>
-                      <td>200</td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>23.11.2023r</td>
-                      <td>eBay</td>
-                      <td>200</td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>24.11.2023r</td>
-                      <td>Stock</td>
-                      <td>200</td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <div class="" style="">
-                  <div class="my-3" style="
+              <div class="" style="">
+                <div class="my-3" style="
                         background-color: #b5cb99;
                         color: black;
                         border-radius: 0.3rem;
@@ -191,23 +171,15 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
                         display: flex;
                         align-items: center;
                       ">
-                    <h4 class="px-3">Your balance is:</h4>
-                  </div>
-                </div>
-
-                <div class="text-center">
-                  <button type="button" class="btn btn-lg btn-secondary" style="width: 25%" data-bs-dismiss="modal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
-                    </svg>
-                    Close
-                  </button>
+                  <h4 class="px-3">Your balance is:</h4>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
       </div>
+    </div>
     </div>
   </section>
 
