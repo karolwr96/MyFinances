@@ -7,6 +7,7 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
   exit();
 }
 
+
 require_once "DBconnect.php";
 mysqli_report(MYSQLI_REPORT_STRICT);
 try {
@@ -170,7 +171,7 @@ if (isset($_POST['formSum'])) { {
               </div>
 
               <div class="col pb-3">
-                <input type="date" name="formDate" class="form-control" placeholder="Date" />
+                <input type="date" name="formDate" class="form-control" value="<?php echo date('Y-m-j'); ?>" />
               </div>
 
               <div class="pb-3">

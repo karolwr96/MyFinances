@@ -7,7 +7,9 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
   exit();
 }
 
-if (isset($_POST['fromDate'])) {
+$startDate = '2024.02.23';
+$endDate = '2024.02.29';
+if (isset($_POST['toDate'])) {
   $startDate = $_POST['fromDate'];
   $endDate = $_POST['toDate'];
 }
@@ -69,7 +71,7 @@ try {
                 Add revenue</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
+              <a class="nav-link active" href="./addExpense.php"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
                   <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z" />
                 </svg>
                 Add expense</a>
@@ -90,7 +92,7 @@ try {
           </ul>
 
           <div>
-            <a href="./index.html" class="btn btn-outline-danger" role="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+            <a href="./index.php" class="btn btn-outline-danger" role="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
                 <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
               </svg>
@@ -102,7 +104,7 @@ try {
   </section>
 
   <section id="balance-sheet">
-    <div class="container col-lg-7 p-4 md-5">
+    <div class="container col-lg-5 p-4 md-5">
       <div class="shadow">
         <div class="gradient-custom-2" style="
               color: white;
@@ -111,44 +113,45 @@ try {
               display: flex;
               align-items: center;
             ">
-          <h2 class="px-3">Your balance sheet</h2>
+          <h4 class="px-3">Your balance sheet</h4>
         </div>
         <div class="container mt-3">
           <div class="row g-0 mb-5">
+
             <form method="post">
 
-              <div class="col pb-3">
-                <input type="date" name="fromDate" class="form-control" placeholder="From" />
+              <input type="checkbox" name="nazwa" value="wartość" onclick="document.getElementById('identyfikator').style.display = this.checked ? 'block' : 'none'; this.form.elements['nazwa2'].disabled = this.form.elements['nazwa3'].disabled = !this.checked">
+              <div id="identyfikator" style="display: none">
+                <input type="text" name="nazwa2" disabled>
+                <input type="text" name="nazwa3" disabled>
               </div>
-
+              
               <div class="col pb-3">
-                <input type="date" name="toDate" class="form-control" placeholder="To" />
+                <input type="text" name="fromDate" class="form-control" placeholder="From" />
+              </div>
+              <div class="col pb-3">
+                <input type="text" name="toDate" class="form-control" placeholder="To" />
               </div>
 
               <div class="text-center">
-                <button type="submit" class="btn btn-lg btn-secondary" style="width: 25%" data-bs-dismiss="modal">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                <button type="submit" class="btn btn-lg btn-primary mb-3" style="background-color: #ee7724; width: 40%">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16">
+                    <path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1" />
                   </svg>
-                  Show balance
+                  Show
                 </button>
               </div>
+
             </form>
 
             <div class="pb-3">
-              <h1 class="modal-title fs-5 my-3" style="font-weight: bold">
-
-              </h1>
-
-              <table>
+              <table class="table">
                 <thead>
-                  <tr>
-                    <th colspan="2">Your revenue</th>
-                  </tr>
-                  <tr>
-                    <th>Category</th>
-                    <th>Amount</th>
-                  </tr>
+                  <h3 style="text-align: center;">Your incomes</h2>
+                    <tr>
+                      <th>Category</th>
+                      <th>Amount</th>
+                    </tr>
                 </thead>
                 <tbody>
                   <?php
@@ -162,19 +165,34 @@ try {
                 </tbody>
               </table>
 
-              <div class="" style="">
-                <div class="my-3" style="
-                        background-color: #b5cb99;
-                        color: black;
+              <table class="table">
+                <thead>
+                  <h3 style="text-align: center;">Your expenses</h2>
+                    <tr>
+                      <th>Category</th>
+                      <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <?php
+                  foreach ($arrayWithResult as $row) {
+                    echo "<tr>
+                    <td>{$row['0']}</td>
+                    <td>{$row['1']}</td>
+                    </tr>";
+                  }
+                  ?>
+                </tbody>
+              </table>
+
+              <div class="my-3" style="
+                        background-color: #ee7724;
+                        color: white;
                         border-radius: 0.3rem;
                         height: 55px;
-                        display: flex;
-                        align-items: center;
                       ">
-                  <h4 class="px-3">Your balance is:</h4>
-                </div>
+                <h4 class="px-3" style="text-align: center;">Your balance is:</h4>
               </div>
-
             </div>
           </div>
         </div>

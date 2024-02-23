@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 if (!isset($_SESSION['isUserLoggedIn'])) {
@@ -14,8 +13,6 @@ try {
   if ($connect->connect_errno != 0) {
     throw new Exception(mysqli_connect_errno());
   } else {
-
-    $connect = new mysqli($host, $db_user, $db_password, $db_name);
     $userCategoryQuery = "SELECT * 
                           FROM incomes_category_assigned_to_users 
                           WHERE user_id = '$_SESSION[idLoggedInUser]'";
@@ -28,24 +25,51 @@ try {
   echo 'Server error';
 }
 
-if (isset($_POST['formSum'])) { {
+if (isset($_POST['formCategory'])) {
 
-    // $okValidation = true;
-    // $_SESSION['formSum'] = $revenueSum;
-    // $_SESSION['formDate'] = $revenueDate;
-    // $_SESSION['formCategory'] = $revenueCategory;
-    // $_SESSION['formComment'] = $revenueComment;
-    //$_SESSION['idLoggedInUser'] = $userId;
+  $okValidation = true;
 
-    $revenueSum = $_POST['formSum'];
-    $revenueDate = $_POST['formDate'];
-    $revenueCategory = $_POST['formCategory'];
-    $revenueComment = $_POST['formComment'];
-    $userId =  $_SESSION['idLoggedInUser'];
+  //is field amout empty?
+  $revenueSum = $_POST['formSum'];
+  if ($revenueSum <= 0) {
+    $okValidation = false;
+    $_SESSION['e_formSum'] = "Amount field must be greater than 0.";
+  }
 
-    $okValidation = true;
+  //is date greater than 2000.01.01?
+  $revenueDate = $_POST['formDate'];
+  $year = substr($revenueDate, 0, 4);
+  $month = substr($revenueDate, 5, 2);
+  $day = substr($revenueDate, 8, 2);
+  (int)$dateFromForm = "$year$month$day";
 
-    require_once "DBconnect.php";
+  if ($dateFromForm < 20000101) {
+    $okValidation = false;
+    $_SESSION['e_formDate'] = "The program does not support dates before 2000.01.01.";
+  }
+
+  //is date greater than current date?
+  $currentDate = date("Y-m-d");
+  if ($revenueDate > $currentDate) {
+    $okValidation = false;
+    $_SESSION['e_formDate'] = "Date greater than the current one.";
+  }
+
+  //checking comment
+  $revenueComment = $_POST['formComment'];
+  if (strlen($revenueComment) > 60) {
+    $okValidation = false;
+    $_SESSION['e_Comment'] = "Comment can have a maximum of 60 characters.";
+  }
+  if (!ctype_alnum($revenueComment)) {
+    $okValidation = false;
+    $_SESSION['e_Comment'] = "Comment can only consist of letters and numbers.";
+  }
+
+  $revenueCategory = $_POST['formCategory'];
+  $userId =  $_SESSION['idLoggedInUser'];
+
+  if ($okValidation) {
     mysqli_report(MYSQLI_REPORT_STRICT);
     try {
       $connect = new mysqli($host, $db_user, $db_password, $db_name);
@@ -60,7 +84,7 @@ if (isset($_POST['formSum'])) { {
           $idCurrentCategory = $row['id'];
 
           if ($connect->query("INSERT INTO incomes VALUES (NULL, '$userId', '$idCurrentCategory', '$revenueSum', '$revenueDate', '$revenueComment')")) {
-            echo '<script>alert("SUKCES!")</script>';
+            echo '<script>alert("Income added successfully!")</script>';
           } else {
             throw new Exception(mysqli_connect_errno());
           }
@@ -72,7 +96,6 @@ if (isset($_POST['formSum'])) { {
     }
   }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -154,11 +177,24 @@ if (isset($_POST['formSum'])) { {
             <div class="container">
               <div class="col pb-3">
                 <input type="number" step="0.01" name="formSum" class="form-control" placeholder=" Amount" />
+
               </div>
+              <?php
+              if (isset($_SESSION['e_formSum'])) {
+                echo '<div class="error">' . $_SESSION['e_formSum'] . '</div>';
+                unset($_SESSION['e_formSum']);
+              }
+              ?>
 
               <div class="col pb-3">
-                <input type="date" name="formDate" class="form-control" placeholder="Date" />
+                <input type="date" name="formDate" class="form-control" value="<?php echo date('Y-m-j'); ?>" />
               </div>
+              <?php
+              if (isset($_SESSION['e_formDate'])) {
+                echo '<div class="error">' . $_SESSION['e_formDate'] . '</div>';
+                unset($_SESSION['e_formDate']);
+              }
+              ?>
 
               <div class="pb-3">
                 <select class="form-select" name="formCategory" aria-label="Default select example" value="">
@@ -175,6 +211,12 @@ if (isset($_POST['formSum'])) { {
               <div class="col pb-4">
                 <input type="text" name="formComment" class="form-control" placeholder="Comment" />
               </div>
+              <?php
+              if (isset($_SESSION['e_Comment'])) {
+                echo '<div class="error">' . $_SESSION['e_Comment'] . '</div>';
+                unset($_SESSION['e_Comment']);
+              }
+              ?>
             </div>
 
             <div class="text-center">
@@ -188,12 +230,12 @@ if (isset($_POST['formSum'])) { {
             </div>
 
             <div class="text-center pb-4">
-              <button type="button" class="btn btn-lg btn-secondary mb-5;" style="width: 40%" data-bs-dismiss="modal">
+              <a href="./logged.php" class="btn btn-lg btn-secondary mb-2" style="width: 40%">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                   <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
                 </svg>
                 Close
-              </button>
+              </a>
             </div>
           </div>
         </div>
