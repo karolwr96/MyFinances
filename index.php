@@ -40,7 +40,7 @@ try {
     }
   }
 } catch (Exception $error) {
-  echo 'Server error';
+  echo '<script>alert("Server error")</script>';
 }
 
 //if (isset($_POST['email'])) {

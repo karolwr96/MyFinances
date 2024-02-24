@@ -2,6 +2,10 @@ body {
   background-color: #eee;
 }
 
+.hidden {
+  display: none;
+}
+
 .gradient-custom-2 {
   /* fallback for old browsers */
   background: #fccb90;

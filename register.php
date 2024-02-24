@@ -88,7 +88,7 @@ if (isset($_POST['email'])) {
       $connect->close();
     }
   } catch (Exception $error) {
-    echo 'Server error';
+    echo '<script>alert("Server error")</script>';
   }
 }
 

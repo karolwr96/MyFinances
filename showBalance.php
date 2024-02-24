@@ -7,14 +7,47 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
   exit();
 }
 
-$startDate = '2024.02.23';
-$endDate = '2024.02.29';
-if (isset($_POST['toDate'])) {
-  $startDate = $_POST['fromDate'];
-  $endDate = $_POST['toDate'];
+//$startDate = '2024.02.23';
+//$endDate = '2024.02.29';
+
+if (isset($_POST['formBalanceData'])) {
+  $selectedInterval = $_POST['formBalanceData'];
+
+  if ($selectedInterval == "currentMonth") {
+    $currentMonth = date('m');
+    $currentYear = date('Y');
+    $startDate = date('Y-m-01', strtotime($currentYear . '-' . $currentMonth . '-01'));
+    $endDate = date('Y-m-t', strtotime($currentYear . '-' . $currentMonth . '-01'));
+    echo $startDate;
+    echo $endDate;
+  }
+  if ($selectedInterval == "previousMonth") {
+    // Get the first day of the previous month
+    $firstDayPrevMonth = new DateTime('first day of last month');
+    $firstDayPrevMonthFormatted = $firstDayPrevMonth->format('Y-m-d');
+    $startDate = $firstDayPrevMonthFormatted;
+    // Get the last day of the previous month
+    $lastDayPrevMonth = new DateTime('last day of last month');
+    $lastDayPrevMonthFormatted = $lastDayPrevMonth->format('Y-m-d');
+    $endDate = $lastDayPrevMonthFormatted;
+    echo $startDate;
+    echo $endDate;
+  }
+  if ($selectedInterval == "individualInterval") {
+    $startDate = $_POST['fromDate'];
+    $endDate = $_POST['toDate'];
+    echo $startDate;
+    echo $endDate;
+  }
 }
 
+/*if (isset($_POST['toDate'])) {
+  $startDate = $_POST['fromDate'];
+  $endDate = $_POST['toDate'];
+}*/
+
 $userId =  $_SESSION['idLoggedInUser'];
+
 
 require_once "DBconnect.php";
 mysqli_report(MYSQLI_REPORT_STRICT);
@@ -104,7 +137,7 @@ try {
   </section>
 
   <section id="balance-sheet">
-    <div class="container col-lg-5 p-4 md-5">
+    <div class="container col-lg-4 p-4 md-5">
       <div class="shadow">
         <div class="gradient-custom-2" style="
               color: white;
@@ -119,19 +152,26 @@ try {
           <div class="row g-0 mb-5">
 
             <form method="post">
-
-              <input type="checkbox" name="nazwa" value="wartość" onclick="document.getElementById('identyfikator').style.display = this.checked ? 'block' : 'none'; this.form.elements['nazwa2'].disabled = this.form.elements['nazwa3'].disabled = !this.checked">
-              <div id="identyfikator" style="display: none">
-                <input type="text" name="nazwa2" disabled>
-                <input type="text" name="nazwa3" disabled>
+              <!-- Komentarz nie wyświetli się na stronie. -->
+              <div class="pb-3">
+                <select id="options" class="form-select" name="formBalanceData" aria-label="Default select example" onchange="toggleFields()">
+                  <option value="currentMonth">Current month</option>
+                  <option value="previousMonth">Previous month</option>
+                  <option value="individualInterval">Select your interval</option>
+                </select>
+                <br>
+                <div id="fields" class="hidden">
+                  <input type="date" name="fromDate" class="form-control">
+                  <br>
+                  <input type="date" name="toDate" class="form-control">
+                </div>
               </div>
-              
-              <div class="col pb-3">
+              <!--<div class="col pb-3">
                 <input type="text" name="fromDate" class="form-control" placeholder="From" />
               </div>
               <div class="col pb-3">
                 <input type="text" name="toDate" class="form-control" placeholder="To" />
-              </div>
+              </div>-->
 
               <div class="text-center">
                 <button type="submit" class="btn btn-lg btn-primary mb-3" style="background-color: #ee7724; width: 40%">
@@ -141,8 +181,9 @@ try {
                   Show
                 </button>
               </div>
-
             </form>
+
+
 
             <div class="pb-3">
               <table class="table">
@@ -202,6 +243,18 @@ try {
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  <script>
+    function toggleFields() {
+      const select = document.getElementById('options');
+      const fields = document.getElementById('fields');
+
+      if (select.value === 'individualInterval') {
+        fields.classList.remove('hidden');
+      } else {
+        fields.classList.add('hidden');
+      }
+    }
+  </script>
 </body>
 
 </html>
