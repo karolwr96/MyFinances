@@ -179,8 +179,12 @@ if (isset($_POST['formCategory'])) {
             <div class="container">
               <div class="col pb-3">
                 <h6 class="px-2">Amount of income</h6>
-                <input type="number" step="0.01" name="formSum" class="form-control" placeholder=" Amount" />
-
+                <input type="number" step="0.01" name="formSum" class="form-control" value="<?php
+                                                                                            if (isset($revenueSum)) {
+                                                                                              echo ($revenueSum);
+                                                                                              unset($revenueSum);
+                                                                                            }
+                                                                                            ?>" />
               </div>
               <?php
               if (isset($_SESSION['e_formSum'])) {
@@ -213,11 +217,11 @@ if (isset($_POST['formCategory'])) {
               <h6 class="px-2">Comment (optional)</h6>
               <div class="col pb-4">
                 <input type="text" name="formComment" class="form-control" value="<?php
-                                                    if (isset($revenueComment)) {
-                                                      echo ($revenueComment);
-                                                      unset($revenueComment);
-                                                    }
-                                                    ?>" />
+                                                                                  if (isset($revenueComment)) {
+                                                                                    echo ($revenueComment);
+                                                                                    unset($revenueComment);
+                                                                                  }
+                                                                                  ?>" />
               </div>
               <?php
               if (isset($_SESSION['e_Comment'])) {

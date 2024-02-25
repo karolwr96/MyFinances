@@ -7,7 +7,6 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
   exit();
 }
 
-
 require_once "DBconnect.php";
 mysqli_report(MYSQLI_REPORT_STRICT);
 try {
@@ -37,55 +36,83 @@ try {
   echo 'Server error';
 }
 
-if (isset($_POST['formSum'])) { {
+if (isset($_POST['formCategory'])) {
+  $okValidation = true;
 
-    // $okValidation = true;
-    // $_SESSION['formSum'] = $revenueSum;
-    // $_SESSION['formDate'] = $revenueDate;
-    // $_SESSION['formCategory'] = $revenueCategory;
-    // $_SESSION['formComment'] = $revenueComment;
-    //$_SESSION['idLoggedInUser'] = $userId;
+  //is field amout empty?
+  $expenseSum = $_POST['formSum'];
+  if ($expenseSum <= 0) {
+    $okValidation = false;
+    $_SESSION['e_formSum'] = "Amount field must be greater than 0.";
+  }
 
-    $expenseSum = $_POST['formSum'];
-    $expenseDate = $_POST['formDate'];
-    $expenseCategory = $_POST['formCategory'];
-    $expenseComment = $_POST['formComment'];
-    $paymentMethod = $_POST['formPaymentMethod'];
-    $userId =  $_SESSION['idLoggedInUser'];
+  //is date greater than 2000.01.01?
+  $expenseDate = $_POST['formDate'];
+  $year = substr($expenseDate, 0, 4);
+  $month = substr($expenseDate, 5, 2);
+  $day = substr($expenseDate, 8, 2);
+  (int)$dateFromForm = "$year$month$day";
 
-    $okValidation = true;
+  if ($dateFromForm < 20000101) {
+    $okValidation = false;
+    $_SESSION['e_formDate'] = "The program does not support dates before 2000.01.01.";
+  }
 
-    require_once "DBconnect.php";
-    mysqli_report(MYSQLI_REPORT_STRICT);
-    try {
-      $connect = new mysqli($host, $db_user, $db_password, $db_name);
-      if ($connect->connect_errno != 0) {
-        throw new Exception(mysqli_connect_errno());
-      } else {
-        if ($okValidation) {
-          $expenseCategoryIdQuery = "SELECT id FROM expenses_category_assigned_to_users WHERE user_id = '$userId' AND name = '$expenseCategory'";
-          $queryResult = $connect->query($expenseCategoryIdQuery);
-          $row = $queryResult->fetch_assoc();
-          $idCurrentExpenseCategory = $row['id'];
+  //is date greater than current date?
+  $currentDate = date("Y-m-d");
+  if ($expenseDate > $currentDate) {
+    $okValidation = false;
+    $_SESSION['e_formDate'] = "Date greater than the current one.";
+  }
 
-          $paymentMethodIdQuery = "SELECT id FROM payment_methods_assigned_to_users WHERE user_id = '$userId' AND name = '$paymentMethod'";
-          $queryResult = $connect->query($paymentMethodIdQuery);
-          $row = $queryResult->fetch_assoc();
-          $idCurrentPaymentMethod = $row['id'];
-
-          if ($connect->query("INSERT INTO expenses VALUES (NULL, '$userId', '$idCurrentExpenseCategory', '$idCurrentPaymentMethod','$expenseSum ', '$expenseDate ', '$expenseComment')")) {
-            echo '<script>alert("SUKCES!")</script>';
-          } else {
-            throw new Exception(mysqli_connect_errno());
-          }
-        }
-        $connect->close();
-      }
-    } catch (Exception $error) {
-      echo 'Server error';
+  //checking comment
+  $expenseComment = $_POST['formComment'];
+  if (!empty($expenseComment)) {
+    if (strlen($expenseComment) > 60) {
+      $okValidation = false;
+      $_SESSION['e_Comment'] = "Comment can have a maximum of 60 characters.";
+    }
+    if (!ctype_alnum($expenseComment)) {
+      $okValidation = false;
+      $_SESSION['e_Comment'] = "Comment can only consist of letters and numbers.";
     }
   }
+
+  $expenseCategory = $_POST['formCategory'];
+  $paymentMethod = $_POST['formPaymentMethod'];
+  $userId =  $_SESSION['idLoggedInUser'];
+
+  require_once "DBconnect.php";
+  mysqli_report(MYSQLI_REPORT_STRICT);
+  try {
+    $connect = new mysqli($host, $db_user, $db_password, $db_name);
+    if ($connect->connect_errno != 0) {
+      throw new Exception(mysqli_connect_errno());
+    } else {
+      if ($okValidation) {
+        $expenseCategoryIdQuery = "SELECT id FROM expenses_category_assigned_to_users WHERE user_id = '$userId' AND name = '$expenseCategory'";
+        $queryResult = $connect->query($expenseCategoryIdQuery);
+        $row = $queryResult->fetch_assoc();
+        $idCurrentExpenseCategory = $row['id'];
+
+        $paymentMethodIdQuery = "SELECT id FROM payment_methods_assigned_to_users WHERE user_id = '$userId' AND name = '$paymentMethod'";
+        $queryResult = $connect->query($paymentMethodIdQuery);
+        $row = $queryResult->fetch_assoc();
+        $idCurrentPaymentMethod = $row['id'];
+
+        if ($connect->query("INSERT INTO expenses VALUES (NULL, '$userId', '$idCurrentExpenseCategory', '$idCurrentPaymentMethod','$expenseSum ', '$expenseDate ', '$expenseComment')")) {
+          echo '<script>alert("SUKCES!")</script>';
+        } else {
+          throw new Exception(mysqli_connect_errno());
+        }
+      }
+      $connect->close();
+    }
+  } catch (Exception $error) {
+    echo 'Server error';
+  }
 }
+
 
 ?>
 
@@ -167,12 +194,31 @@ if (isset($_POST['formSum'])) { {
             <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-4 border-top-0"></div>
             <div class="container">
               <div class="col pb-3">
-                <input type="number" step="0.01" name="formSum" class="form-control" placeholder=" Amount" />
+                <h6 class="px-2">Amount of expense</h6>
+                <input type="number" step="0.01" name="formSum" class="form-control" value="<?php
+                                                                                            if (isset($expenseSum)) {
+                                                                                              echo ($expenseSum);
+                                                                                              unset($expenseSum);
+                                                                                            }
+                                                                                            ?>" />
               </div>
-
+              <?php
+              if (isset($_SESSION['e_formSum'])) {
+                echo '<div class="error">' . $_SESSION['e_formSum'] . '</div>';
+                unset($_SESSION['e_formSum']);
+              }
+              ?>
+              <h6 class="px-2">Expense date</h6>
               <div class="col pb-3">
                 <input type="date" name="formDate" class="form-control" value="<?php echo date('Y-m-j'); ?>" />
               </div>
+              <?php
+              if (isset($_SESSION['e_formDate'])) {
+                echo '<div class="error">' . $_SESSION['e_formDate'] . '</div>';
+                unset($_SESSION['e_formDate']);
+              }
+              ?>
+              <h6 class="px-2">Expense category</h6>
 
               <div class="pb-3">
                 <select class="form-select" name="formCategory" aria-label="Default select example" value="">
@@ -186,6 +232,7 @@ if (isset($_POST['formSum'])) { {
                 </select>
               </div>
 
+              <h6 class="px-2"> Payment method</h6>
               <div class="pb-3">
                 <select class="form-select" name="formPaymentMethod" aria-label="Default select example" value="">
                   <?php
@@ -198,9 +245,21 @@ if (isset($_POST['formSum'])) { {
                 </select>
               </div>
 
+              <h6 class="px-2">Comment (optional)</h6>
               <div class="col pb-4">
-                <input type="text" name="formComment" class="form-control" placeholder="Comment" />
+                <input type="text" name="formComment" class="form-control" value="<?php
+                                                                                  if (isset($expenseComment)) {
+                                                                                    echo ($expenseComment);
+                                                                                    unset($expenseComment);
+                                                                                  }
+                                                                                  ?>" />
               </div>
+              <?php
+              if (isset($_SESSION['e_Comment'])) {
+                echo '<div class="error">' . $_SESSION['e_Comment'] . '</div>';
+                unset($_SESSION['e_Comment']);
+              }
+              ?>
             </div>
 
             <div class="text-center">
