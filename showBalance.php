@@ -7,9 +7,6 @@ if (!isset($_SESSION['isUserLoggedIn'])) {
   exit();
 }
 
-//$startDate = '2024.02.23';
-//$endDate = '2024.02.29';
-
 if (isset($_POST['formBalanceData'])) {
   $selectedInterval = $_POST['formBalanceData'];
 
@@ -20,53 +17,50 @@ if (isset($_POST['formBalanceData'])) {
     $endDate = date('Y-m-t', strtotime($currentYear . '-' . $currentMonth . '-01'));
     echo $startDate;
     echo $endDate;
-  }
-  if ($selectedInterval == "previousMonth") {
+  } else if ($selectedInterval == "previousMonth") {
     // Get the first day of the previous month
     $firstDayPrevMonth = new DateTime('first day of last month');
-    $firstDayPrevMonthFormatted = $firstDayPrevMonth->format('Y-m-d');
-    $startDate = $firstDayPrevMonthFormatted;
+    $startDate = $firstDayPrevMonth->format('Y-m-d');
     // Get the last day of the previous month
     $lastDayPrevMonth = new DateTime('last day of last month');
-    $lastDayPrevMonthFormatted = $lastDayPrevMonth->format('Y-m-d');
-    $endDate = $lastDayPrevMonthFormatted;
+    $endDate = $lastDayPrevMonth->format('Y-m-d');
     echo $startDate;
     echo $endDate;
-  }
-  if ($selectedInterval == "individualInterval") {
+  } else {
     $startDate = $_POST['fromDate'];
     $endDate = $_POST['toDate'];
     echo $startDate;
     echo $endDate;
   }
-}
 
-/*if (isset($_POST['toDate'])) {
-  $startDate = $_POST['fromDate'];
-  $endDate = $_POST['toDate'];
-}*/
+  $userId =  $_SESSION['idLoggedInUser'];
 
-$userId =  $_SESSION['idLoggedInUser'];
-
-
-require_once "DBconnect.php";
-mysqli_report(MYSQLI_REPORT_STRICT);
-try {
-  $connect = new mysqli($host, $db_user, $db_password, $db_name);
-  if ($connect->connect_errno != 0) {
-    throw new Exception(mysqli_connect_errno());
-  } else {
-    $showIncomesBalanceQuery = "SELECT incomes_category_assigned_to_users.name AS category, SUM(incomes.amount) AS amount FROM incomes_category_assigned_to_users INNER JOIN incomes ON incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id WHERE incomes.user_id = '$userId' AND incomes.date_of_income  BETWEEN '$startDate' AND '$endDate' GROUP BY incomes.income_category_assigned_to_user_id ORDER BY amount DESC;";
-    if ($queryResult = $connect->query($showIncomesBalanceQuery)) {
-      $arrayWithResult = $queryResult->fetch_all();
+  require_once "DBconnect.php";
+  mysqli_report(MYSQLI_REPORT_STRICT);
+  try {
+    $connect = new mysqli($host, $db_user, $db_password, $db_name);
+    if ($connect->connect_errno != 0) {
+      throw new Exception(mysqli_connect_errno());
     } else {
-      echo '<script>alert("FALSE!")</script>';
-    }
+      $showIncomesBalanceQuery = "SELECT incomes_category_assigned_to_users.name AS category, SUM(incomes.amount) AS amount FROM incomes_category_assigned_to_users INNER JOIN incomes ON incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id WHERE incomes.user_id = '$userId' AND incomes.date_of_income  BETWEEN '$startDate' AND '$endDate' GROUP BY incomes.income_category_assigned_to_user_id ORDER BY amount DESC;";
+      if ($queryResult = $connect->query($showIncomesBalanceQuery)) {
+        $arrayWithResult = $queryResult->fetch_all();
+      } else {
+        echo '<script>alert("Server error")</script>';
+      }
 
-    $connect->close();
+      $showExpensesBalanceQuery = "SELECT expenses_category_assigned_to_users.name AS category, SUM(expenses.amount) AS amount FROM expenses_category_assigned_to_users INNER JOIN expenses ON expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id WHERE expenses.user_id = '$userId' AND expenses.date_of_expense  BETWEEN '$startDate' AND '$endDate' GROUP BY expenses.expense_category_assigned_to_user_id ORDER BY amount DESC;";
+      if ($queryExpensesResult = $connect->query($showExpensesBalanceQuery)) {
+        $arrayWithExpenses = $queryExpensesResult->fetch_all();
+      } else {
+        echo '<script>alert("Server error expenses")</script>';
+      }
+
+      $connect->close();
+    }
+  } catch (Exception $error) {
+    echo 'Server error';
   }
-} catch (Exception $error) {
-  echo 'Server error';
 }
 
 ?>
@@ -150,28 +144,24 @@ try {
         </div>
         <div class="container mt-3">
           <div class="row g-0 mb-5">
-
+            <h6 class="px-2">Select date range</h6>
             <form method="post">
               <!-- Komentarz nie wyświetli się na stronie. -->
               <div class="pb-3">
                 <select id="options" class="form-select" name="formBalanceData" aria-label="Default select example" onchange="toggleFields()">
                   <option value="currentMonth">Current month</option>
                   <option value="previousMonth">Previous month</option>
-                  <option value="individualInterval">Select your interval</option>
+                  <option value="individualInterval">Own scope</option>
                 </select>
                 <br>
                 <div id="fields" class="hidden">
+                  <h6 class="px-2">From:</h6>
                   <input type="date" name="fromDate" class="form-control">
                   <br>
+                  <h6 class="px-2">To:</h6>
                   <input type="date" name="toDate" class="form-control">
                 </div>
               </div>
-              <!--<div class="col pb-3">
-                <input type="text" name="fromDate" class="form-control" placeholder="From" />
-              </div>
-              <div class="col pb-3">
-                <input type="text" name="toDate" class="form-control" placeholder="To" />
-              </div>-->
 
               <div class="text-center">
                 <button type="submit" class="btn btn-lg btn-primary mb-3" style="background-color: #ee7724; width: 40%">
@@ -183,12 +173,10 @@ try {
               </div>
             </form>
 
-
-
             <div class="pb-3">
               <table class="table">
                 <thead>
-                  <h3 style="text-align: center;">Your incomes</h2>
+                  <h4 class="px-2">Your incomes:</h4>
                     <tr>
                       <th>Category</th>
                       <th>Amount</th>
@@ -196,11 +184,13 @@ try {
                 </thead>
                 <tbody>
                   <?php
-                  foreach ($arrayWithResult as $row) {
-                    echo "<tr>
+                  if (isset($_POST['formBalanceData'])) {
+                    foreach ($arrayWithResult as $row) {
+                      echo "<tr>
                     <td>{$row['0']}</td>
                     <td>{$row['1']}</td>
                     </tr>";
+                    }
                   }
                   ?>
                 </tbody>
@@ -208,7 +198,7 @@ try {
 
               <table class="table">
                 <thead>
-                  <h3 style="text-align: center;">Your expenses</h2>
+                <h4 class="px-2">Your expenses:</h4>
                     <tr>
                       <th>Category</th>
                       <th>Amount</th>
@@ -216,11 +206,13 @@ try {
                 </thead>
                 <tbody>
                   <?php
-                  foreach ($arrayWithResult as $row) {
-                    echo "<tr>
+                  if (isset($_POST['formBalanceData'])) {
+                    foreach ($arrayWithExpenses as $row) {
+                      echo "<tr>
                     <td>{$row['0']}</td>
                     <td>{$row['1']}</td>
                     </tr>";
+                    }
                   }
                   ?>
                 </tbody>

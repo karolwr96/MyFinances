@@ -57,13 +57,15 @@ if (isset($_POST['formCategory'])) {
 
   //checking comment
   $revenueComment = $_POST['formComment'];
-  if (strlen($revenueComment) > 60) {
-    $okValidation = false;
-    $_SESSION['e_Comment'] = "Comment can have a maximum of 60 characters.";
-  }
-  if (!ctype_alnum($revenueComment)) {
-    $okValidation = false;
-    $_SESSION['e_Comment'] = "Comment can only consist of letters and numbers.";
+  if (!empty($revenueComment)) {
+    if (strlen($revenueComment) > 60) {
+      $okValidation = false;
+      $_SESSION['e_Comment'] = "Comment can have a maximum of 60 characters.";
+    }
+    if (!ctype_alnum($revenueComment)) {
+      $okValidation = false;
+      $_SESSION['e_Comment'] = "Comment can only consist of letters and numbers.";
+    }
   }
 
   $revenueCategory = $_POST['formCategory'];
@@ -92,7 +94,7 @@ if (isset($_POST['formCategory'])) {
         $connect->close();
       }
     } catch (Exception $error) {
-      echo 'Server error';
+      echo '<script>alert("Server error")</script>';
     }
   }
 }
@@ -176,6 +178,7 @@ if (isset($_POST['formCategory'])) {
             <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-4 border-top-0"></div>
             <div class="container">
               <div class="col pb-3">
+                <h6 class="px-2">Amount of income</h6>
                 <input type="number" step="0.01" name="formSum" class="form-control" placeholder=" Amount" />
 
               </div>
@@ -185,7 +188,7 @@ if (isset($_POST['formCategory'])) {
                 unset($_SESSION['e_formSum']);
               }
               ?>
-
+              <h6 class="px-2">Income date</h6>
               <div class="col pb-3">
                 <input type="date" name="formDate" class="form-control" value="<?php echo date('Y-m-j'); ?>" />
               </div>
@@ -195,7 +198,7 @@ if (isset($_POST['formCategory'])) {
                 unset($_SESSION['e_formDate']);
               }
               ?>
-
+              <h6 class="px-2">Source of income</h6>
               <div class="pb-3">
                 <select class="form-select" name="formCategory" aria-label="Default select example" value="">
                   <?php
@@ -207,9 +210,14 @@ if (isset($_POST['formCategory'])) {
                   ?>
                 </select>
               </div>
-
+              <h6 class="px-2">Comment (optional)</h6>
               <div class="col pb-4">
-                <input type="text" name="formComment" class="form-control" placeholder="Comment" />
+                <input type="text" name="formComment" class="form-control" value="<?php
+                                                    if (isset($revenueComment)) {
+                                                      echo ($revenueComment);
+                                                      unset($revenueComment);
+                                                    }
+                                                    ?>" />
               </div>
               <?php
               if (isset($_SESSION['e_Comment'])) {
