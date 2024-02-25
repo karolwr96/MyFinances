@@ -15,22 +15,14 @@ if (isset($_POST['formBalanceData'])) {
     $currentYear = date('Y');
     $startDate = date('Y-m-01', strtotime($currentYear . '-' . $currentMonth . '-01'));
     $endDate = date('Y-m-t', strtotime($currentYear . '-' . $currentMonth . '-01'));
-    echo $startDate;
-    echo $endDate;
   } else if ($selectedInterval == "previousMonth") {
-    // Get the first day of the previous month
     $firstDayPrevMonth = new DateTime('first day of last month');
     $startDate = $firstDayPrevMonth->format('Y-m-d');
-    // Get the last day of the previous month
     $lastDayPrevMonth = new DateTime('last day of last month');
     $endDate = $lastDayPrevMonth->format('Y-m-d');
-    echo $startDate;
-    echo $endDate;
   } else {
     $startDate = $_POST['fromDate'];
     $endDate = $_POST['toDate'];
-    echo $startDate;
-    echo $endDate;
   }
 
   $userId =  $_SESSION['idLoggedInUser'];
@@ -53,8 +45,29 @@ if (isset($_POST['formBalanceData'])) {
       if ($queryExpensesResult = $connect->query($showExpensesBalanceQuery)) {
         $arrayWithExpenses = $queryExpensesResult->fetch_all();
       } else {
-        echo '<script>alert("Server error expenses")</script>';
+        echo '<script>alert("Server error")</script>';
       }
+
+      //Try to get sum of expenses 
+      $getSumOfExpensesQuery = "SELECT SUM(amount) AS totalExpenses FROM expenses  WHERE expenses.user_id = '$userId' AND expenses.date_of_expense  BETWEEN '$startDate' AND '$endDate';";
+      if ($queryExpensesResult = $connect->query($getSumOfExpensesQuery)) {
+        $queryExpensesResult = $connect->query($getSumOfExpensesQuery);
+        $arrayWithSumOfExpenses =  $queryExpensesResult->fetch_assoc();
+        $sumOfExpenses = $arrayWithSumOfExpenses['totalExpenses'];
+      } else {
+        echo '<script>alert("Server error")</script>';
+      }
+
+      //Try to get sum of incomes 
+      $getSumOfIncomesQuery = "SELECT SUM(amount) AS totalIncomes FROM incomes  WHERE incomes.user_id = '$userId' AND incomes.date_of_income  BETWEEN '$startDate' AND '$endDate';";
+      if ($queryIncomesResult = $connect->query($getSumOfIncomesQuery)) {
+        $arrayWithSumOfIncomes =  $queryIncomesResult->fetch_assoc();
+        $sumOfIncomes = $arrayWithSumOfIncomes['totalIncomes'];
+      } else {
+        echo '<script>alert("Server error")</script>';
+      }
+
+      $totalBalance = $sumOfIncomes - $sumOfExpenses;
 
       $connect->close();
     }
@@ -176,11 +189,13 @@ if (isset($_POST['formBalanceData'])) {
             <div class="pb-3">
               <table class="table">
                 <thead>
-                  <h4 class="px-2">Your incomes:</h4>
-                    <tr>
-                      <th>Category</th>
-                      <th>Amount</th>
-                    </tr>
+                  <h6 class="px-2">Total incomes: <?php if (isset($sumOfIncomes)) {
+                                                    echo $sumOfIncomes;
+                                                  } ?></h6>
+                  <tr>
+                    <th>Category</th>
+                    <th>Amount</th>
+                  </tr>
                 </thead>
                 <tbody>
                   <?php
@@ -198,11 +213,13 @@ if (isset($_POST['formBalanceData'])) {
 
               <table class="table">
                 <thead>
-                <h4 class="px-2">Your expenses:</h4>
-                    <tr>
-                      <th>Category</th>
-                      <th>Amount</th>
-                    </tr>
+                  <h6 class="px-2">Total expenses: <?php if (isset($sumOfExpenses)) {
+                                                      echo $sumOfExpenses;
+                                                    } ?></h6>
+                  <tr>
+                    <th>Category</th>
+                    <th>Amount</th>
+                  </tr>
                 </thead>
                 <tbody>
                   <?php
@@ -218,13 +235,10 @@ if (isset($_POST['formBalanceData'])) {
                 </tbody>
               </table>
 
-              <div class="my-3" style="
-                        background-color: #ee7724;
-                        color: white;
-                        border-radius: 0.3rem;
-                        height: 55px;
-                      ">
-                <h4 class="px-3" style="text-align: center;">Your balance is:</h4>
+              <div class="my-3">
+                <h5 class="px-3" style="text-align: center;">Your balance is: <?php if (isset($totalBalance)) {
+                                                                                echo $totalBalance;
+                                                                              } ?></h5>
               </div>
             </div>
           </div>
