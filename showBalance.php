@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 if (!isset($_SESSION['isUserLoggedIn'])) {
@@ -66,7 +65,6 @@ if (isset($_POST['formBalanceData'])) {
       } else {
         echo '<script>alert("Server error")</script>';
       }
-
       $totalBalance = $sumOfIncomes - $sumOfExpenses;
 
       $connect->close();
@@ -75,7 +73,6 @@ if (isset($_POST['formBalanceData'])) {
     echo 'Server error';
   }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -159,7 +156,6 @@ if (isset($_POST['formBalanceData'])) {
           <div class="row g-0 mb-5">
             <h6 class="px-2">Select date range</h6>
             <form method="post">
-              <!-- Komentarz nie wyświetli się na stronie. -->
               <div class="pb-3">
                 <select id="options" class="form-select" name="formBalanceData" aria-label="Default select example" onchange="toggleFields()">
                   <option value="currentMonth">Current month</option>

@@ -5,7 +5,6 @@ require_once "DBconnect.php";
 mysqli_report(MYSQLI_REPORT_STRICT);
 try {
   $connect = new mysqli($host, $db_user, $db_password, $db_name);
-
   if ($connect->connect_errno != 0) {
     throw new Exception(mysqli_connect_errno());
   } else {
@@ -13,24 +12,20 @@ try {
       $email = $_POST['email'];
       $password = $_POST['password'];
 
-
-      $loggingQuery = "SELECT * FROM users WHERE email = '$email'"; // AND password = '$password'";
+      $loggingQuery = "SELECT * FROM users WHERE email = '$email'";
 
       if ($loggingResult = $connect->query($loggingQuery)) {
         $howManyUsers = $loggingResult->num_rows;
         if ($howManyUsers > 0) {
           $row = $loggingResult->fetch_assoc();
           if (password_verify($password, $row['password'])) {
-            //  if ($password == $row['password']) {
             $_SESSION['isUserLoggedIn'] = true;
             $_SESSION['idLoggedInUser'] = $row['id'];
             header('Location:logged.php');
           } else {
-            //echo 'Wrong email or password.';
             $_SESSION['loggingError'] = '<span style="color:red">Wrong email or password.</span>';
           }
         } else {
-          // echo 'Wrong email or password.';
           $_SESSION['loggingError'] = '<span style="color:red">Wrong email or password.</span>';
         }
       } else {
@@ -42,11 +37,6 @@ try {
 } catch (Exception $error) {
   echo '<script>alert("Server error")</script>';
 }
-
-//if (isset($_POST['email'])) {
-// $email = $_POST['email'];
-// $password = $_POST['password'];
-//}
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +51,6 @@ try {
 </head>
 
 <body>
-
   <section class="h-100 gradient-form" style="background-color: #eee;">
     <div class="container py-0 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
@@ -93,7 +82,7 @@ try {
                         </svg> Password</label>
                       <br />
                       <?php
-                      if (isset($_SESSION['loggingError']))  echo $_SESSION['loggingError'];
+                      if (isset($_SESSION['loggingError'])) echo $_SESSION['loggingError'];
                       unset($_SESSION['loggingError']);
                       ?>
                     </div>
@@ -105,17 +94,17 @@ try {
                         </svg> Log
                         in</button>
                     </div>
-                    <div class="text-center mb-4">
-                      <a class="text-muted" href="#!">Forgot password?</a>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center pb-4">
-                      <p class="mb-0 me-2">Don't have an account?</p>
-                      <a href="./register.php" class="btn btn-outline-danger" role="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hammer" viewBox="0 0 16 16">
-                          <path d="M9.972 2.508a.5.5 0 0 0-.16-.556l-.178-.129a5.009 5.009 0 0 0-2.076-.783C6.215.862 4.504 1.229 2.84 3.133H1.786a.5.5 0 0 0-.354.147L.146 4.567a.5.5 0 0 0 0 .706l2.571 2.579a.5.5 0 0 0 .708 0l1.286-1.29a.5.5 0 0 0 .146-.353V5.57l8.387 8.873A.5.5 0 0 0 14 14.5l1.5-1.5a.5.5 0 0 0 .017-.689l-9.129-8.63c.747-.456 1.772-.839 3.112-.839a.5.5 0 0 0 .472-.334z" />
-                        </svg> Create now</a>
-                    </div>
                   </form>
 
+                  <div class="text-center mb-4">
+                    <a class="text-muted" href="">Forgot password?</a>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-center pb-4">
+                    <p class="mb-0 me-2">Don't have an account?</p>
+                    <a href="./register.php" class="btn btn-outline-danger" role="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hammer" viewBox="0 0 16 16">
+                        <path d="M9.972 2.508a.5.5 0 0 0-.16-.556l-.178-.129a5.009 5.009 0 0 0-2.076-.783C6.215.862 4.504 1.229 2.84 3.133H1.786a.5.5 0 0 0-.354.147L.146 4.567a.5.5 0 0 0 0 .706l2.571 2.579a.5.5 0 0 0 .708 0l1.286-1.29a.5.5 0 0 0 .146-.353V5.57l8.387 8.873A.5.5 0 0 0 14 14.5l1.5-1.5a.5.5 0 0 0 .017-.689l-9.129-8.63c.747-.456 1.772-.839 3.112-.839a.5.5 0 0 0 .472-.334z" />
+                      </svg> Create now</a>
+                  </div>
                 </div>
               </div>
               <div class="col-lg-6 d-flex align-items-center gradient-custom-2">

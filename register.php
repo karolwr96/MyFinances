@@ -91,8 +91,8 @@ if (isset($_POST['email'])) {
     echo '<script>alert("Server error")</script>';
   }
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -105,7 +105,6 @@ if (isset($_POST['email'])) {
 </head>
 
 <body>
-
   <section class="h-100 gradient-form" style="background-color: #eee;">
     <div class="container py-0 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
@@ -223,7 +222,6 @@ if (isset($_POST['email'])) {
                       unset($_SESSION['successfulRegistration']);
                     }
                     ?>
-
                   </form>
 
                 </div>

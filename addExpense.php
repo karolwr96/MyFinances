@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 if (!isset($_SESSION['isUserLoggedIn'])) {
@@ -82,7 +81,6 @@ if (isset($_POST['formCategory'])) {
   $paymentMethod = $_POST['formPaymentMethod'];
   $userId =  $_SESSION['idLoggedInUser'];
 
-  require_once "DBconnect.php";
   mysqli_report(MYSQLI_REPORT_STRICT);
   try {
     $connect = new mysqli($host, $db_user, $db_password, $db_name);
@@ -101,7 +99,7 @@ if (isset($_POST['formCategory'])) {
         $idCurrentPaymentMethod = $row['id'];
 
         if ($connect->query("INSERT INTO expenses VALUES (NULL, '$userId', '$idCurrentExpenseCategory', '$idCurrentPaymentMethod','$expenseSum ', '$expenseDate ', '$expenseComment')")) {
-          echo '<script>alert("SUKCES!")</script>';
+          echo '<script>alert("Expense added successfully!")</script>';
         } else {
           throw new Exception(mysqli_connect_errno());
         }
@@ -112,8 +110,6 @@ if (isset($_POST['formCategory'])) {
     echo 'Server error';
   }
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -194,6 +190,7 @@ if (isset($_POST['formCategory'])) {
             <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-4 border-top-0"></div>
             <div class="container">
               <div class="col pb-3">
+
                 <h6 class="px-2">Amount of expense</h6>
                 <input type="number" step="0.01" name="formSum" class="form-control" value="<?php
                                                                                             if (isset($expenseSum)) {
@@ -208,6 +205,7 @@ if (isset($_POST['formCategory'])) {
                 unset($_SESSION['e_formSum']);
               }
               ?>
+
               <h6 class="px-2">Expense date</h6>
               <div class="col pb-3">
                 <input type="date" name="formDate" class="form-control" value="<?php echo date('Y-m-j'); ?>" />
@@ -218,8 +216,8 @@ if (isset($_POST['formCategory'])) {
                 unset($_SESSION['e_formDate']);
               }
               ?>
-              <h6 class="px-2">Expense category</h6>
 
+              <h6 class="px-2">Expense category</h6>
               <div class="pb-3">
                 <select class="form-select" name="formCategory" aria-label="Default select example" value="">
                   <?php
@@ -271,21 +269,19 @@ if (isset($_POST['formCategory'])) {
                 Add expense
               </button>
             </div>
-
             <div class="text-center pb-4">
-              <button type="button" class="btn btn-lg btn-secondary mb-5;" style="width: 40%" data-bs-dismiss="modal">
+              <a href="./logged.php" class="btn btn-lg btn-secondary mb-2" style="width: 40%">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                   <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
                 </svg>
                 Close
-              </button>
+              </a>
             </div>
           </div>
         </div>
       </div>
     </form>
   </section>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 </body>
 

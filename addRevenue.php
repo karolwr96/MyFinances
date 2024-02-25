@@ -26,7 +26,6 @@ try {
 }
 
 if (isset($_POST['formCategory'])) {
-
   $okValidation = true;
 
   //is field amout empty?
@@ -79,7 +78,6 @@ if (isset($_POST['formCategory'])) {
         throw new Exception(mysqli_connect_errno());
       } else {
         if ($okValidation) {
-
           $incomeCategoryIdQuery = "SELECT id FROM incomes_category_assigned_to_users WHERE user_id = '$userId' AND name = '$revenueCategory'";
           $queryResult = $connect->query($incomeCategoryIdQuery);
           $row = $queryResult->fetch_assoc();
@@ -178,6 +176,7 @@ if (isset($_POST['formCategory'])) {
             <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-4 border-top-0"></div>
             <div class="container">
               <div class="col pb-3">
+
                 <h6 class="px-2">Amount of income</h6>
                 <input type="number" step="0.01" name="formSum" class="form-control" value="<?php
                                                                                             if (isset($revenueSum)) {
@@ -192,6 +191,7 @@ if (isset($_POST['formCategory'])) {
                 unset($_SESSION['e_formSum']);
               }
               ?>
+
               <h6 class="px-2">Income date</h6>
               <div class="col pb-3">
                 <input type="date" name="formDate" class="form-control" value="<?php echo date('Y-m-j'); ?>" />
@@ -202,6 +202,7 @@ if (isset($_POST['formCategory'])) {
                 unset($_SESSION['e_formDate']);
               }
               ?>
+
               <h6 class="px-2">Source of income</h6>
               <div class="pb-3">
                 <select class="form-select" name="formCategory" aria-label="Default select example" value="">
@@ -214,6 +215,7 @@ if (isset($_POST['formCategory'])) {
                   ?>
                 </select>
               </div>
+
               <h6 class="px-2">Comment (optional)</h6>
               <div class="col pb-4">
                 <input type="text" name="formComment" class="form-control" value="<?php
@@ -254,7 +256,6 @@ if (isset($_POST['formCategory'])) {
       </div>
     </form>
   </section>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 </body>
 
